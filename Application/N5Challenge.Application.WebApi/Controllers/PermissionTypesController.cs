@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using N5Challenge.Domain.Core.Commands.PermissionTypes;
 using N5Challenge.Domain.Core.Queries.PermissionTypes;
 using N5Challenge.Transverse.Dto;
+using N5Challenge.Transverse.Entities;
 
 namespace N5Challenge.Application.WebApi.Controllers
 {
@@ -48,6 +49,13 @@ namespace N5Challenge.Application.WebApi.Controllers
         {
             try
             {
+                GetPermissionTypesQueryResponse? permissionType = _mediator.Send(new GetPermissionTypeByIdQuery() { Id = permissionInfo.Id }).Result;
+
+                if (permissionType == null || permissionType.Id == 0)
+                {
+                    throw new Exception("Tipo de permiso no existe. Ingrese un tipo de permiso correcto");
+                }
+
                 await _mediator.Send(permissionInfo);
 
                 return Ok();

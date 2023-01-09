@@ -45,7 +45,7 @@ namespace N5Challenge.Domain.Core.Commands.Permissions
                 Transverse.Entities.Permissions newPermission = new()
                 {
                     EmployeeForename = request.EmployeeForename,
-                    EmployeeSurname = request.EmployeeForename,
+                    EmployeeSurname = request.EmployeeSurname,
                     PermissionDate = DateTime.Now,
                     PermissionTypeId= request.PermissionTypeId,
                 };

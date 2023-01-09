@@ -31,19 +31,20 @@ namespace N5Challenge.Infrastructure.Repository
                 ProducerConfig config = new()
                 {
                     BootstrapServers = _options.KafkaServer,
-                    ClientId = Dns.GetHostName()
+                    ClientId = Dns.GetHostName(),
+                    CancellationDelayMaxMs = _options.CancellationDelayMaxMs
                 };
 
                 using (var producer = new ProducerBuilder<Null, string>(config).Build())
                 {
-                    var result = producer.ProduceAsync(_options.TopicName, new Message<Null, string>
+                    var producerResponse = producer.ProduceAsync(_options.TopicName, new Message<Null, string>
                     {
                         Value = JsonConvert.SerializeObject(eventInfo)
                     });
 
-                    Log.Information("[Kafka Publish Message] --> Topic: {@Topic} on server {@server} with message {@Message} -- {@Result}", _options.TopicName, _options.KafkaServer, eventInfo, result);
+                    Log.Information("[Kafka Publish Message] --> Topic: {@Topic} on server {@server} with message {@Message} -- {Result}", _options.TopicName, _options.KafkaServer, eventInfo, producerResponse);
 
-                    return result != null && result.Id > 0;
+                    return producerResponse != null && producerResponse.Id > 0;
                 }
             }
             catch (Exception ex)

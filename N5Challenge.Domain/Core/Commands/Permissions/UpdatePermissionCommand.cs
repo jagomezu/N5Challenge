@@ -47,8 +47,9 @@ namespace N5Challenge.Domain.Core.Commands.Permissions
                 {
                     Id = request.Id,
                     EmployeeForename = request.EmployeeForename,
-                    EmployeeSurname = request.EmployeeForename,
+                    EmployeeSurname = request.EmployeeSurname,
                     PermissionTypeId = request.PermissionTypeId,
+                    PermissionDate = DateTime.Now
                 };
                 bool result = await _repository.UpdatePermission(newPermission);
 

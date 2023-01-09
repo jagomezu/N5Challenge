@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using N5Challenge.Domain.Core.Commands.Permissions;
 using N5Challenge.Domain.Core.Queries.Permissions;
+using N5Challenge.Domain.Core.Queries.PermissionTypes;
 using N5Challenge.Transverse.Dto;
 
 namespace N5Challenge.Application.WebApi.Controllers
@@ -27,6 +28,8 @@ namespace N5Challenge.Application.WebApi.Controllers
         {
             try
             {
+                ValidatePermissionType(permissionInfo.PermissionTypeId);
+
                 await _mediator.Send(permissionInfo);
 
                 return Ok();
@@ -48,6 +51,10 @@ namespace N5Challenge.Application.WebApi.Controllers
         {
             try
             {
+                ValidatePermissionType(permissionInfo.PermissionTypeId);
+
+                ValidatePermission(permissionInfo.Id);
+
                 await _mediator.Send(permissionInfo);
 
                 return Ok();
@@ -82,6 +89,28 @@ namespace N5Challenge.Application.WebApi.Controllers
                 };
 
                 return BadRequest(response);
+            }
+        }
+        #endregion
+
+        #region Private methods
+        private void ValidatePermission(int permissionId)
+        {
+            GetPermissionsQueryResponse validPermission = _mediator.Send(new GetPermissionByIdQuery() { Id = permissionId }).Result;
+
+            if (validPermission == null || validPermission.Id == 0)
+            {
+                throw new Exception("Permiso no existe. Ingrese un tipo de permiso correcto");
+            }
+        }
+
+        private void ValidatePermissionType(int permissionTypeId)
+        {
+            GetPermissionTypesQueryResponse? permissionType = _mediator.Send(new GetPermissionTypeByIdQuery() { Id = permissionTypeId }).Result;
+
+            if (permissionType == null || permissionType.Id == 0)
+            {
+                throw new Exception("Tipo de permiso no existe. Ingrese un tipo de permiso correcto");
             }
         }
         #endregion

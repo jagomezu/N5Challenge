@@ -27,7 +27,6 @@ namespace N5Challenge.Infrastructure.Repository
 
             try
             {
-
                 if (index > 0)
                 {
                     int pageNumber = (index + 1);
@@ -43,6 +42,34 @@ namespace N5Challenge.Infrastructure.Repository
             catch (Exception ex)
             {
                 LoggerUtils.WriteLogError("Get Permissions Error] --> Index: {@Index} and size {@Size}", ex, index, size);
+
+                throw;
+            }
+
+            return result;
+        }
+
+        public async Task<Permissions?> GetPermissionById(int id)
+        {
+            Log.Information("[Get Permission by id] --> Id:{@Id}", id);
+            Permissions? result;
+
+            try
+            {
+                result = dbContext.Permissions.AsNoTracking().FirstOrDefault(pt => pt.Id == id);
+
+                if (result != null)
+                {
+                    Log.Information("[Get Permission by id] --> Id: {@Id} Permission found: {@PermissionType}", id, result);
+                }
+                else
+                {
+                    Log.Warning("[Get Permission by id] --> Id: {@Id} Permission not found", result);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerUtils.WriteLogError("[Get Permission by id Error] --> Id: {@Id}", ex, id);
 
                 throw;
             }

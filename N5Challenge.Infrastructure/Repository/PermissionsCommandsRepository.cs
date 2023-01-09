@@ -29,7 +29,7 @@ namespace N5Challenge.Infrastructure.Repository
             {
                 dbContext.Entry(permission).State = EntityState.Added;
                 await dbContext.SaveChangesAsync();
-                dbContext.Entry(permission).ReloadAsync();
+                await dbContext.Entry(permission).ReloadAsync();
 
                 Log.Information("[Add Permission] --> Permission Info: {@Permission} -- Permission added successfully.", permission);
 

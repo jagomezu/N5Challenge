@@ -27,7 +27,8 @@ builder.Services.AddElasticsearch(new ElasticSearchOptionsDto() { ServerUrl = el
 
 string kafkaServer = builder.Configuration.GetValue<string>("AppSettings:kafkaServer");
 string topicName = builder.Configuration.GetValue<string>("AppSettings:topicName");
-builder.Services.AddSingleton<IEventManagerRepository>(new KafkaEventManagerRepository(new KafkaOptionsDto { KafkaServer = kafkaServer, TopicName = topicName }));
+int cancellationDelayMaxMs = builder.Configuration.GetValue<int>("AppSettings:cancellationDelayMaxMs");
+builder.Services.AddSingleton<IEventManagerRepository>(new KafkaEventManagerRepository(new KafkaOptionsDto { KafkaServer = kafkaServer, TopicName = topicName, CancellationDelayMaxMs = cancellationDelayMaxMs }));
 
 builder.Services.AddSingleton<IPermissionsCommandsRepository, PermissionsCommandsRepository>();
 builder.Services.AddSingleton<IPermissionsQueriesRepository, PermissionsQueriesRepository>();

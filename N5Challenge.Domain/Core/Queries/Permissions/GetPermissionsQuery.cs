@@ -4,28 +4,26 @@ using N5Challenge.Infrastructure.Interfaces;
 using N5Challenge.Transverse.Dto;
 using N5Challenge.Transverse.Enums;
 using N5Challenge.Transverse.Logger;
-using Nest;
 using Serilog;
 
 namespace N5Challenge.Domain.Core.Queries.Permissions
 {
-    public class GetPermissionsQuery : MediatR.IRequest<List<GetPermissionsQueryResponse>>
+    public class GetPermissionsQuery : IRequest<List<GetPermissionsQueryResponse>>
     {
         public int Index { get; set; } = 0;
 
         public int Size { get; set; } = 20;
     }
 
-    public class GetPermissionsQueryHandler : MediatR.IRequestHandler<GetPermissionsQuery, List<GetPermissionsQueryResponse>>
+    public class GetPermissionsQueryHandler : IRequestHandler<GetPermissionsQuery, List<GetPermissionsQueryResponse>>
     {
         #region Properties
-        //private readonly IPermissionsQueriesRepository _repository;
-        private readonly IElasticClient _repository;
+        private readonly IPermissionsQueriesRepository _repository;
         private readonly IEventManagerDomain _eventManagerDomain;
         #endregion
 
         #region Constructor
-        public GetPermissionsQueryHandler(/*IPermissionsQueriesRepository repository, */IElasticClient repository, IEventManagerDomain eventManagerDomain)
+        public GetPermissionsQueryHandler(IPermissionsQueriesRepository repository, IEventManagerDomain eventManagerDomain)
         {
             _repository = repository;
             _eventManagerDomain = eventManagerDomain;
@@ -40,10 +38,9 @@ namespace N5Challenge.Domain.Core.Queries.Permissions
 
             try
             {
-                //List<Transverse.Entities.Permissions> list = await _repository.GetPermissions(request.Index, request.Size);
-                var list = _repository.Search<PermissionsDto>(s => s.Query(q => q.MatchAll()));
+                List<Transverse.Entities.Permissions> list = await _repository.GetPermissions(request.Index, request.Size);
 
-                /*if (list != null && list.Count() > 0)
+                if (list != null && list.Count() > 0)
                 {
                     result = list
                         .Select(p => new GetPermissionsQueryResponse()
@@ -61,7 +58,7 @@ namespace N5Challenge.Domain.Core.Queries.Permissions
                 else
                 {
                     Log.Warning("[DOMAIN Get Permissions] --> Index: {@Index} and size {@Size} -- Permissions not found.", request.Index, request.Size);
-                }*/
+                }
 
                 _eventManagerDomain.PublishMessage(new EventDto { Id = Guid.NewGuid(), NameOperation = OperationType.get.ToString() });
             }
